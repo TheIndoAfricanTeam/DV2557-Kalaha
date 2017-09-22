@@ -212,6 +212,44 @@ public class AIClient implements Runnable
      */
     public int getMove(GameState currentBoard)
     {
+    	private int miniMax(GameState gameState, int depth, int alpha, int beta)
+    	{
+    		if (gameState.getWinner())	|| (depth == 0){
+    			return getScore(gameState);
+    		}
+    		else if (gameState.getNextPlayer() == "MAX")	{
+    			int currentScore = -999999;
+    			
+    			GameState children[] = gameState.makeMove(ambo);
+    			numChilds = children.length;
+    			for (i = 0; i < numChilds; i++)	{
+    				int nextScore = miniMax(numChilds[i], depth - 1, currentScore, beta);
+    				if (nextScore > currentScore)	{
+    					currentScore = nextScore;
+    				}
+    				else if (currentScore > beta)	{
+    					return beta;
+    				}
+    			}
+    			return currentScore;
+    		}
+    		else if (gameState.getNextPlayer() == "MAX")	{
+    			int currentScore = 999999;
+    			
+    			GameState children[] = gameState.makeMove(ambo);
+    			numChilds = children.length;
+    			for (i = 0; i < numChilds; i++)	{
+    				int nextScore = miniMax(numChilds[i], depth - 1, alpha, currentScore);
+    				if (nextScore < currentScore)	{
+    					currentScore = nextScore;
+    				}
+    				else if (currentScore < alpha)	{
+    					return alpha;
+    				}
+    			}
+    			return currentScore;
+    		}
+    	}
     	GameState copyCurrentBoard = currentBoard.clone();
     	
     	
