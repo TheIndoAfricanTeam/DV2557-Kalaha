@@ -202,6 +202,8 @@ public class AIClient implements Runnable
         }
     }
     
+    
+    
     /**
      * This is the method that makes a move each time it is your turn.
      * Here you need to change the call to the random method to your
@@ -212,49 +214,15 @@ public class AIClient implements Runnable
      */
     public int getMove(GameState currentBoard)
     {
-    	private int miniMax(GameState gameState, int depth, int alpha, int beta)
-    	{
-    		if (gameState.getWinner())	|| (depth == 0){
-    			return getScore(gameState);
-    		}
-    		else if (gameState.getNextPlayer() == "MAX")	{
-    			int currentScore = -999999;
-    			
-    			GameState children[] = gameState.makeMove(ambo);
-    			numChilds = children.length;
-    			for (i = 0; i < numChilds; i++)	{
-    				int nextScore = miniMax(numChilds[i], depth - 1, currentScore, beta);
-    				if (nextScore > currentScore)	{
-    					currentScore = nextScore;
-    				}
-    				else if (currentScore > beta)	{
-    					return beta;
-    				}
-    			}
-    			return currentScore;
-    		}
-    		else if (gameState.getNextPlayer() == "MAX")	{
-    			int currentScore = 999999;
-    			
-    			GameState children[] = gameState.makeMove(ambo);
-    			numChilds = children.length;
-    			for (i = 0; i < numChilds; i++)	{
-    				int nextScore = miniMax(numChilds[i], depth - 1, alpha, currentScore);
-    				if (nextScore < currentScore)	{
-    					currentScore = nextScore;
-    				}
-    				else if (currentScore < alpha)	{
-    					return alpha;
-    				}
-    			}
-    			return currentScore;
-    		}
-    	}
-    	GameState copyCurrentBoard = currentBoard.clone();
-    	
-    	
-    	
-    	int myMove = getRandom();
+       	int next_player = currentBoard.getNextPlayer();
+		int start_player;
+		if (next_player == 1)	{
+			start_player = 2;
+		}
+		else	{
+			start_player = 1;
+		}
+    	int myMove = minimax(currentBoard, 5, 99999, 99999);
         return myMove;
     }
     
@@ -268,4 +236,89 @@ public class AIClient implements Runnable
     {
         return 1 + (int)(Math.random() * 6);
     }
+    
+    /**
+     * The Minimax class
+     * @author entro
+     *
+     */
+    
+    public static class MiniMax 
+    {
+    	private GameState gameState;
+    	private int depth;
+    	private int min;
+    	private int max;
+    	
+    	public static MiniMax(GameState gameState, int depth, int min, int max)
+    	{
+    		this.gameState = gameState.clone();
+    		this.depth = depth;
+    		this.min = min;
+    		this.max = max;
+    	}
+    	
+    	/**
+    	 *  The search method.
+    	 * @param GameState The initial board state
+         * @param depth The depth of the Game tree
+         * @param min The alpha value
+         * @param max The beta value
+          Move to make (1-6)
+    	**/
+    	
+    	public int search()
+    	{
+          	if (gameState.gameEnded() || depth == 0){
+        		if (gameState.gameEnded())	{
+        			int winner = current_state.getWinner();
+        			return current_state.getScore(winner);
+        		}
+        		else	{
+        			return current_state.getScore(current_player) - current_state.getScore(next_player);
+    			} 
+    		}
+    		elseif (gameState.getNextPlayer() == 1)	{	// Maximizer node 
+    			int currentScore = -9999;
+    			GameState children[] = {};
+    			Stack children = Stack();
+    			for (int i = amboIndexes[0]; i < amboIndexes.length + 1; i++)	{
+    				if (gameState.moveIsPossible(i))	{
+    					children.push(gameState.makeMove(i));
+    				}
+    			}
+    	        while (!children.isEmpty())
+    			numChilds = children.length;
+    			for (i = 0; i < numChilds; i++)	{
+    				int nextScore = miniMax(numChilds[i], depth - 1, currentScore, max);
+    				if (nextScore > currentScore)	{
+    					currentScore = nextScore;
+    				}
+    				else if (currentScore > max)	{
+    					return max;
+    				}
+    			}
+    			return currentScore;
+    		}
+    		else if (gameState.getNextPlayer() == "MAX")	{
+    			int currentScore = 999999;
+    			
+    			GameState children[] = gameState.makeMove(ambo);
+    			numChilds = children.length;
+    			for (i = 0; i < numChilds; i++)	{
+    				int nextScore = miniMax(numChilds[i], depth - 1, min, currentScore);
+    				if (nextScore < currentScore)	{
+    					currentScore = nextScore;
+    				}
+    				else if (currentScore < min)	{
+    					return min;
+    				}
+    			}
+    			return currentScore;
+    		}
+    		return;
+    		
+    	}
+    }
+   
 }
