@@ -222,7 +222,7 @@ public class AIClient implements Runnable
 		else	{
 			start_player = 1;
 		}
-    	int myMove = MiniMax(currentBoard, 5, 99999, 99999).res;
+    	int myMove = MiniMax(currentBoard, 1, 5, -99999, 99999).res;
         return myMove;
     }
     
@@ -260,6 +260,8 @@ public class AIClient implements Runnable
     	// Search result
     	private int res;
     	
+    	// Player (+1 - Max , +2 - Min)
+    	private int player; 
     	/**
     	 * Initializes a Game Tree & stores the search result
     	 * 
@@ -275,44 +277,40 @@ public class AIClient implements Runnable
     		this.depth = depth;
     		this.min = min;
     		this.max = max;
-    		this.res = search(this.initState, this.depth, this.min, this.max);
+    		this.player = 1;
+    		this.res = search(this.initState, this.player, this.depth, this.min, this.max);
     	}
     	
     	/**
     	 *  The search method.
     	 *  
     	 * @param GameState The initial board state
+    	 * @param player The current player
          * @param depth The depth of the Game tree
          * @param min The alpha value
          * @param max The beta value
            @return Move to make (1-6)
     	**/
     	
-    	private int search(GameState initState, int depth, int min, int max)
+    	private int search(GameState gameState, int player, int depth, int min, int max)
     	{
-    		GameState gameState = initState.clone();
-          	if (gameState.gameEnded() || depth == 0){
-        		if (gameState.gameEnded())	{
-        			int winner = current_state.getWinner();
-        			return current_state.getScore(winner);
-        		}
-        		else	{
-        			return current_state.getScore(current_player) - current_state.getScore(next_player);
-    			} 
+          	if (gameState.gameEnded() || depth == 0)	{
+          		return gameState.getScore(player) - gameState.getScore(2 / player);
     		}
-    		else if (gameState.getNextPlayer() == this.initState.getNextPlayer())	{	// Maximizer node 
+    		else if (player == 1)	{	// Maximizer node 
     			int currentScore = min;
     		    Stack<GameState> children = new Stack<GameState>();
-    			for (int i = 0; i < 5; i++)	{
+    			for (int i = 1; i < 6; i++)	{
     				if (gameState.moveIsPossible(i))	{
-    					gameState.makeMove(i);
-    					children.push(gameState.clone());
+    					GameState nextState = gameState.clone();
+    					nextState.makeMove(i);
+    					children.push(nextState);
     				}
     			}
     	        while (!children.isEmpty())	
     	        {
     	        	GameState child = children.pop();			
-    	        	int nextScore = search(child, depth - 1, currentScore, max);
+    	        	int nextScore = search(child, 2, depth - 1, currentScore, max);
     				if (nextScore > currentScore)	{
     					currentScore = nextScore;
     				}
@@ -322,19 +320,20 @@ public class AIClient implements Runnable
     			}
     			return currentScore;
     		}
-    		else if (gameState.getNextPlayer() == this.initState.getNextPlayer())	{
+    		else if (player == 2)	{     // Minimizer node
     			int currentScore = max;
     			Stack<GameState> children = new Stack<GameState>();
     			for (int i = 0; i < 5; i++)	{
     				if (gameState.moveIsPossible(i))	{
-    					gameState.makeMove(i);
-    					children.push(gameState.clone());
+    					GameState nextState = gameState.clone();
+    					nextState.makeMove(i);
+    					children.push(nextState);
     				}
     			}
     	        while (!children.isEmpty())	
     	        {
     	        	GameState child = children.pop();			
-    	        	int nextScore = search(child, depth - 1, min, currentScore);
+    	        	int nextScore = search(child, 1, depth - 1, min, currentScore);
     				if (nextScore < currentScore)	{
     					currentScore = nextScore;
     				}
@@ -344,6 +343,7 @@ public class AIClient implements Runnable
     			}
     			return currentScore;
      		}
+			return 1 + (int)(Math.random() * 6);
+          	}
     	}
     }
-}
