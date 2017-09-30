@@ -6,7 +6,7 @@ import java.net.*;
 import javax.swing.*;
 import java.awt.*;
 import kalaha.*;
-
+import java.util.Stack;
 /**
  * This is the main class for your Kalaha AI bot. Currently
  * it only makes a random, valid move each turn.
@@ -222,7 +222,7 @@ public class AIClient implements Runnable
 		else	{
 			start_player = 1;
 		}
-    	int myMove = minimax(currentBoard, 5, 99999, 99999);
+    	int myMove = MiniMax(currentBoard, 5, 99999, 99999).res;
         return myMove;
     }
     
@@ -239,36 +239,58 @@ public class AIClient implements Runnable
     
     /**
      * The Minimax class
+     * 
      * @author entro
-     *
      */
     
-    public static class MiniMax 
+    public class MiniMax 
     {
-    	private GameState gameState;
+    	// Initial Game State
+    	private GameState initState;
+    	
+    	// Depth limit of the Game Tree
     	private int depth;
+    	
+    	// Alpha value
     	private int min;
+    	
+    	// Beta value
     	private int max;
     	
-    	public static MiniMax(GameState gameState, int depth, int min, int max)
+    	// Search result
+    	private int res;
+    	
+    	/**
+    	 * Initializes a Game Tree & stores the search result
+    	 * 
+    	 * @param initState
+    	 * @param depth
+    	 * @param min
+    	 * @param max
+    	 */
+    	
+    	public MiniMax(GameState initState, int depth, int min, int max)
     	{
-    		this.gameState = gameState.clone();
+    		this.initState = initState.clone();
     		this.depth = depth;
     		this.min = min;
     		this.max = max;
+    		this.res = search(this.initState, this.depth, this.min, this.max);
     	}
     	
     	/**
     	 *  The search method.
+    	 *  
     	 * @param GameState The initial board state
          * @param depth The depth of the Game tree
          * @param min The alpha value
          * @param max The beta value
-          Move to make (1-6)
+           @return Move to make (1-6)
     	**/
     	
-    	public int search()
+    	private int search(GameState initState, int depth, int min, int max)
     	{
+    		GameState gameState = initState.clone();
           	if (gameState.gameEnded() || depth == 0){
         		if (gameState.gameEnded())	{
         			int winner = current_state.getWinner();
@@ -278,19 +300,19 @@ public class AIClient implements Runnable
         			return current_state.getScore(current_player) - current_state.getScore(next_player);
     			} 
     		}
-    		elseif (gameState.getNextPlayer() == 1)	{	// Maximizer node 
-    			int currentScore = -9999;
-    			GameState children[] = {};
-    			Stack children = Stack();
-    			for (int i = amboIndexes[0]; i < amboIndexes.length + 1; i++)	{
+    		else if (gameState.getNextPlayer() == this.initState.getNextPlayer())	{	// Maximizer node 
+    			int currentScore = min;
+    		    Stack<GameState> children = new Stack<GameState>();
+    			for (int i = 0; i < 5; i++)	{
     				if (gameState.moveIsPossible(i))	{
-    					children.push(gameState.makeMove(i));
+    					gameState.makeMove(i);
+    					children.push(gameState.clone());
     				}
     			}
-    	        while (!children.isEmpty())
-    			numChilds = children.length;
-    			for (i = 0; i < numChilds; i++)	{
-    				int nextScore = miniMax(numChilds[i], depth - 1, currentScore, max);
+    	        while (!children.isEmpty())	
+    	        {
+    	        	GameState child = children.pop();			
+    	        	int nextScore = search(child, depth - 1, currentScore, max);
     				if (nextScore > currentScore)	{
     					currentScore = nextScore;
     				}
@@ -300,13 +322,19 @@ public class AIClient implements Runnable
     			}
     			return currentScore;
     		}
-    		else if (gameState.getNextPlayer() == "MAX")	{
-    			int currentScore = 999999;
-    			
-    			GameState children[] = gameState.makeMove(ambo);
-    			numChilds = children.length;
-    			for (i = 0; i < numChilds; i++)	{
-    				int nextScore = miniMax(numChilds[i], depth - 1, min, currentScore);
+    		else if (gameState.getNextPlayer() == this.initState.getNextPlayer())	{
+    			int currentScore = max;
+    			Stack<GameState> children = new Stack<GameState>();
+    			for (int i = 0; i < 5; i++)	{
+    				if (gameState.moveIsPossible(i))	{
+    					gameState.makeMove(i);
+    					children.push(gameState.clone());
+    				}
+    			}
+    	        while (!children.isEmpty())	
+    	        {
+    	        	GameState child = children.pop();			
+    	        	int nextScore = search(child, depth - 1, min, currentScore);
     				if (nextScore < currentScore)	{
     					currentScore = nextScore;
     				}
@@ -315,10 +343,7 @@ public class AIClient implements Runnable
     				}
     			}
     			return currentScore;
-    		}
-    		return;
-    		
+     		}
     	}
     }
-   
 }
