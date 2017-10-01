@@ -220,12 +220,14 @@ public class AIClient implements Runnable
     	/**
         *   Initialize minimizeDFS with current player
         */
-        MiniMaxDFS minimax = new MiniMaxDFS(currentBoard.getNextPlayer());
+//        MiniMaxDFS minimax = new MiniMaxDFS(currentBoard.getNextPlayer());
+        MiniMaxIDDFS minimax = new MiniMaxIDDFS(currentBoard.getNextPlayer());
         
         /**
         *   compute the minimax on the current board based on specified depth
         */
-        minimax.findBestMove(currentBoard.clone(), DEPTH);
+//        minimaxDFS.findBestMove(currentBoard.clone(), DEPTH);
+        minimax.findBestMove(currentBoard.clone(), DEPTH, 0);
        
         /**
         *   return the best move for AI
