@@ -24,6 +24,11 @@ public class AIClient implements Runnable
     private Socket socket;
     private boolean running;
     private boolean connected;
+    
+    /**
+     *  Define the DEPTH constant for minimax
+     */
+    private static final int DEPTH = 5;
     	
     /**
      * Creates a new client.
@@ -212,50 +217,20 @@ public class AIClient implements Runnable
      */
     public int getMove(GameState currentBoard)
     {
-    	private int miniMax(GameState gameState, int depth, int alpha, int beta)
-    	{
-    		if (gameState.getWinner())	|| (depth == 0){
-    			return getScore(gameState);
-    		}
-    		else if (gameState.getNextPlayer() == "MAX")	{
-    			int currentScore = -999999;
-    			
-    			GameState children[] = gameState.makeMove(ambo);
-    			numChilds = children.length;
-    			for (i = 0; i < numChilds; i++)	{
-    				int nextScore = miniMax(numChilds[i], depth - 1, currentScore, beta);
-    				if (nextScore > currentScore)	{
-    					currentScore = nextScore;
-    				}
-    				else if (currentScore > beta)	{
-    					return beta;
-    				}
-    			}
-    			return currentScore;
-    		}
-    		else if (gameState.getNextPlayer() == "MAX")	{
-    			int currentScore = 999999;
-    			
-    			GameState children[] = gameState.makeMove(ambo);
-    			numChilds = children.length;
-    			for (i = 0; i < numChilds; i++)	{
-    				int nextScore = miniMax(numChilds[i], depth - 1, alpha, currentScore);
-    				if (nextScore < currentScore)	{
-    					currentScore = nextScore;
-    				}
-    				else if (currentScore < alpha)	{
-    					return alpha;
-    				}
-    			}
-    			return currentScore;
-    		}
-    	}
-    	GameState copyCurrentBoard = currentBoard.clone();
-    	
-    	
-    	
-    	int myMove = getRandom();
-        return myMove;
+    	/**
+        *   Initialize minimizeDFS with current player
+        */
+        MiniMaxDFS minimax = new MiniMaxDFS(currentBoard.getNextPlayer());
+        
+        /**
+        *   compute the minimax on the current board based on specified depth
+        */
+        minimax.findBestMove(currentBoard.clone(), DEPTH);
+       
+        /**
+        *   return the best move for AI
+        */
+        return minimax.getBestMove();
     }
     
     /**
