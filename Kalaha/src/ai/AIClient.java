@@ -226,12 +226,13 @@ public class AIClient implements Runnable
         /**
         *   compute the minimax on the current board based on specified depth
         */
-//        minimaxDFS.findBestMove(currentBoard.clone(), DEPTH);
+//        minimax.findBestMove(currentBoard.clone(), DEPTH);
         minimax.findBestMove(currentBoard.clone(), DEPTH, 0);
        
         /**
         *   return the best move for AI
         */
+        
         return minimax.getBestMove();
     }
     

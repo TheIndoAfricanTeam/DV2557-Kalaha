@@ -70,30 +70,23 @@ abstract class MiniMax {
      *
      *  @return utilityValue
      */
-    public int evaluate(GameState board){
-        int maxUtility = 0;
+    public int evaluate(GameState board){ 
+        int utility = 0;
         
-        int MAXScore = board.getScore(MAX);
-        int MINScore = board.getScore(MIN);
-        
-        if(board.getWinner() == -1){
-            if(MAXScore>MINScore){
-                maxUtility += 1;
-            }else{
-                maxUtility -= 1;
-            }
-            
-            return maxUtility = this.computeValueOfSeedsRemainingOnBoard(board, maxUtility);
-        }else if(board.getWinner() == MAX){
-            return 50;
+        if(board.gameEnded()){
+            return board.getScore(board.getNextPlayer());
         }else{
-            return -50;
+            utility = board.getScore(MAX)-board.getScore(MIN);
+            
+            return this.computeValueOfSeedsRemainingOnBoard(board);
         }
     }
     
-    protected int computeValueOfSeedsRemainingOnBoard(GameState board, int maxUtility){
+    protected int computeValueOfSeedsRemainingOnBoard(GameState board){
+        int maxUtility = 0;
+        
         for(int i = 1; i<7; i++){
-            if(board.getSeeds(i, MAX)!=0){
+            if(board.getSeeds(i, MAX)>0){
                 if(7-i == board.getSeeds(i, MAX))
                     maxUtility += 5;
             }else{
@@ -105,7 +98,7 @@ abstract class MiniMax {
                 }
             }
             
-            if(board.getSeeds(i, MIN)!=0){
+            if(board.getSeeds(i, MIN)<0){
                 if(7-i == board.getSeeds(i, MIN))
                     maxUtility -= 5;
             }else{

@@ -27,7 +27,7 @@ class MiniMaxIDDFS extends MiniMax {
      *
      *  @return utilityValue;
      */
-    public int findBestMove(GameState board, int depth, double timeElapsed){        
+    public int findBestMove(GameState board, int depth, double timeElapsed){
         long startTime = System.currentTimeMillis();
         
         /**
@@ -42,15 +42,16 @@ class MiniMaxIDDFS extends MiniMax {
          */
         if(board.getNextPlayer()==MAX){
             for(int _depth = 1; _depth<depth; _depth++){
+                int bestChildUtilityValue = -999999;
+                
                 for(int move : this.getPossibleMoves(board)){
                     GameState clone = board.clone();
                     clone.makeMove(move);
                     
                     long endTime = System.currentTimeMillis()-startTime;
-                    
                     int boardUtility = this.findBestMove(clone,_depth - 1, (endTime/1000) );
                     
-                    if(boardUtility < this.maxUtilityValue){
+                    if(boardUtility > bestChildUtilityValue){
                         this.bestMove =  move;
                         this.maxUtilityValue = boardUtility;
                     }
@@ -58,14 +59,17 @@ class MiniMaxIDDFS extends MiniMax {
             }
         }else{
             for(int _depth = 1; _depth<depth; _depth++){
+                int bestChildUtilityValue = 999999;
+                
                 for(int move : this.getPossibleMoves(board)){
+                    
                     GameState clone = board.clone();
                     clone.makeMove(move);
                     
-                    long endTime = System.currentTimeMillis()-startTime;                    
+                    long endTime = System.currentTimeMillis()-startTime;
                     int boardUtility = this.findBestMove(clone,depth - 1, (endTime/1000));
                     
-                    if(boardUtility > this.maxUtilityValue){
+                    if(boardUtility < bestChildUtilityValue){
                         this.bestMove =  move;
                         this.maxUtilityValue = boardUtility;
                     }
