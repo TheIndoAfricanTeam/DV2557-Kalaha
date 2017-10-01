@@ -50,11 +50,10 @@ class MiniMaxDFSAlphaBetaPrunning extends MiniMax{
                 
                 if(boardUtility > bestChildUtilityValue){
                     this.bestMove =  move;
-                    this.maxUtilityValue = boardUtility;
-                }
-                
-                if(boardUtility > beta)
+                    bestChildUtilityValue = boardUtility;
+                }else if(bestChildUtilityValue > beta){
                     return beta;
+                }
             }
             
             return bestChildUtilityValue;
@@ -70,11 +69,10 @@ class MiniMaxDFSAlphaBetaPrunning extends MiniMax{
                 
                 if(boardUtility < bestChildUtilityValue){
                     this.bestMove =  move;
-                    this.maxUtilityValue = boardUtility;
-                }
-                
-                if(boardUtility <alpha)
+                    bestChildUtilityValue = boardUtility;
+                }else if(bestChildUtilityValue < alpha){
                     return alpha;
+                }
             }
             
             return bestChildUtilityValue;

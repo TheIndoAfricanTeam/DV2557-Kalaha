@@ -72,13 +72,17 @@ abstract class MiniMax {
      *
      *  @return utilityValue
      */
-    public int evaluate(GameState board){ 
+    public int evaluate(GameState board){
         //TODO any bouse with more than 32 marbles won the game
-        int utility = 0;
+        int winner = board.getWinner();
         
-        if(board.gameEnded()){
-            //TODO: rethink this
-            return board.getScore(board.getNextPlayer());
+        if(winner != -1){
+            if(winner == MAX)
+                return INFINITY;
+            else if(winner == MIN)
+                return -INFINITY;
+            else
+                return 0;
         }else{
             //check if current player has more than 36 pebbles in house
             if(board.getNextPlayer()== MAX && board.getScore(MAX) > 36)
@@ -86,7 +90,7 @@ abstract class MiniMax {
             
             if(board.getNextPlayer()== MIN && board.getScore(MIN) > 36)
                 return -INFINITY;
-                
+            
             return this.computeValueOfSeedsRemainingOnBoard(board);
         }
     }
@@ -96,8 +100,13 @@ abstract class MiniMax {
         
         for(int i = 1; i<7; i++){
             if(board.getSeeds(i, MAX)>0){
+                //if the move gets you to play again (ending in players house)
                 if(7-i == board.getSeeds(i, MAX))
                     maxUtility += 5;
+                
+                //if the move gets you to collect pebble
+                if(7-i > board.getSeeds(i, MAX) && board.getSeeds(7-i,MIN)>0)
+                    maxUtility += 5 * board.getSeeds(7-i,MIN);
             }else{
                 if(board.getSeeds(i, MIN) > 0){
                     for(int j = 1; j < i; j++){
@@ -110,6 +119,10 @@ abstract class MiniMax {
             if(board.getSeeds(i, MIN)<0){
                 if(7-i == board.getSeeds(i, MIN))
                     maxUtility -= 5;
+                
+                //if the move gets you to collect pebble
+                if(7-i > board.getSeeds(i, MIN) && board.getSeeds(7-i,MAX)>0)
+                    maxUtility -= 5 * board.getSeeds(7-i,MAX);
             }else{
                 if(board.getSeeds(i, MAX) > 0){
                     for(int j = 1; j < i; j++){

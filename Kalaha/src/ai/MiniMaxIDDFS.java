@@ -28,6 +28,7 @@ class MiniMaxIDDFS extends MiniMax {
      *  @return utilityValue;
      */
     public int findBestMove(GameState board, int depth, double timeElapsed){
+        System.out.println("Depth " + depth + " time " + timeElapsed);
         long startTime = System.currentTimeMillis();
         
         /**
