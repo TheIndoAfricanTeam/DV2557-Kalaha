@@ -14,8 +14,8 @@ import kalaha.GameState;
  *
  * Using minimax depth-first-search to find the best move for AI client
  */
-class MiniMaxIDDFS extends MiniMax {
-    public MiniMaxIDDFS(int MAX){
+class MiniMaxIDDFSAlphaBetaPrunning extends MiniMax {
+    public MiniMaxIDDFSAlphaBetaPrunning(int MAX){
         super(MAX);
     }
     
@@ -27,7 +27,7 @@ class MiniMaxIDDFS extends MiniMax {
      *
      *  @return utilityValue;
      */
-    public int findBestMove(GameState board, int depth, double timeElapsed){
+    public int findBestMove(GameState board, int depth, double timeElapsed,int alpha, int beta){
         long startTime = System.currentTimeMillis();
         
         /**
@@ -42,14 +42,14 @@ class MiniMaxIDDFS extends MiniMax {
          */
         if(board.getNextPlayer()==MAX){
             for(int _depth = 1; _depth<depth; _depth++){
-                int bestChildUtilityValue = -INFINITY;
+                int bestChildUtilityValue = alpha;
                 
                 for(int move : this.getPossibleMoves(board)){
                     GameState clone = board.clone();
                     clone.makeMove(move);
                     
                     long endTime = System.currentTimeMillis()-startTime;
-                    int boardUtility = this.findBestMove(clone,_depth - 1, (endTime/1000) );
+                    int boardUtility = this.findBestMove(clone,_depth - 1, (endTime/1000), bestChildUtilityValue, beta);
                     
                     if(boardUtility > bestChildUtilityValue){
                         this.bestMove =  move;
@@ -59,7 +59,7 @@ class MiniMaxIDDFS extends MiniMax {
             }
         }else{
             for(int _depth = 1; _depth<depth; _depth++){
-                int bestChildUtilityValue = INFINITY;
+                int bestChildUtilityValue = beta;
                 
                 for(int move : this.getPossibleMoves(board)){
                     
@@ -67,7 +67,7 @@ class MiniMaxIDDFS extends MiniMax {
                     clone.makeMove(move);
                     
                     long endTime = System.currentTimeMillis()-startTime;
-                    int boardUtility = this.findBestMove(clone,_depth - 1, (endTime/1000));
+                    int boardUtility = this.findBestMove(clone,_depth - 1, (endTime/1000),alpha, bestChildUtilityValue);
                     
                     if(boardUtility < bestChildUtilityValue){
                         this.bestMove =  move;

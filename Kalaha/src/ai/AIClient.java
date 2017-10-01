@@ -10,7 +10,7 @@ import kalaha.*;
 /**
  * This is the main class for your Kalaha AI bot. Currently
  * it only makes a random, valid move each turn.
- * 
+ *
  * @author Johan Hagelbäck
  */
 public class AIClient implements Runnable
@@ -29,19 +29,19 @@ public class AIClient implements Runnable
      *  Define the DEPTH constant for minimax
      */
     private static final int DEPTH = 5;
-    	
+    
     /**
      * Creates a new client.
      */
     public AIClient()
     {
-	player = -1;
+        player = -1;
         connected = false;
         
         //This is some necessary client stuff. You don't need
         //to change anything here.
         initGUI();
-	
+        
         try
         {
             addText("Connecting to localhost:" + KalahaMain.port);
@@ -94,7 +94,7 @@ public class AIClient implements Runnable
     
     /**
      * Adds a text string to the GUI textarea.
-     * 
+     *
      * @param txt The text to add
      */
     public void addText(String txt)
@@ -122,7 +122,7 @@ public class AIClient implements Runnable
                 {
                     out.println(Commands.HELLO);
                     reply = in.readLine();
-
+                    
                     String tokens[] = reply.split(" ");
                     player = Integer.parseInt(tokens[1]);
                     
@@ -150,14 +150,14 @@ public class AIClient implements Runnable
                     addText("Even game!");
                     running = false;
                 }
-
+                
                 //Check if it is my turn. If so, do a move
                 out.println(Commands.NEXT_PLAYER);
                 reply = in.readLine();
                 if (!reply.equals(Errors.GAME_NOT_FULL) && running)
                 {
                     int nextPlayer = Integer.parseInt(reply);
-
+                    
                     if(nextPlayer == player)
                     {
                         out.println(Commands.BOARD);
@@ -190,7 +190,7 @@ public class AIClient implements Runnable
                 //Wait
                 Thread.sleep(100);
             }
-	}
+        }
         catch (Exception ex)
         {
             running = false;
@@ -211,35 +211,46 @@ public class AIClient implements Runnable
      * This is the method that makes a move each time it is your turn.
      * Here you need to change the call to the random method to your
      * Minimax search.
-     * 
+     *
      * @param currentBoard The current board state
      * @return Move to make (1-6)
      */
     public int getMove(GameState currentBoard)
     {
-    	/**
-        *   Initialize minimizeDFS with current player
-        */
+        /**
+         *   Initialize minimizeDFS with current player
+         */
+        
 //        MiniMaxDFS minimax = new MiniMaxDFS(currentBoard.getNextPlayer());
+//        MiniMaxDFSAlphaBetaPrunning minimax = new MiniMaxDFSAlphaBetaPrunning(currentBoard.getNextPlayer());
         MiniMaxIDDFS minimax = new MiniMaxIDDFS(currentBoard.getNextPlayer());
+        //MiniMaxIDDFS minimax = new MiniMaxIDDFS(currentBoard.getNextPlayer());
         
         /**
-        *   compute the minimax on the current board based on specified depth
-        */
+         *  compute the minimax on the current board based
+         *  
+         *  @param board
+         *  @param depth
+         *  @param alpha
+         *  @param beta
+         *  @return move
+         */
 //        minimax.findBestMove(currentBoard.clone(), DEPTH);
+//        minimax.findBestMove(currentBoard.clone(), DEPTH,-999,999);
         minimax.findBestMove(currentBoard.clone(), DEPTH, 0);
-       
-        /**
-        *   return the best move for AI
-        */
+        //minimax.findBestMove(currentBoard.clone(), DEPTH,0,-999,999
         
-        return minimax.getBestMove();
+        /**
+         *   return the best move for AI
+         */
+        
+        return minimax.bestMove;
     }
     
     /**
      * Returns a random ambo number (1-6) used when making
      * a random move.
-     * 
+     *
      * @return Random ambo number
      */
     public int getRandom()

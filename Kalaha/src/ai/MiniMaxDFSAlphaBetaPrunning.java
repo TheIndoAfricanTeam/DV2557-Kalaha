@@ -14,8 +14,8 @@ import kalaha.GameState;
  *
  * Using minimax depth-first-search to find the best move for AI client
  */
-class MiniMaxDFS extends MiniMax{
-    public MiniMaxDFS(int MAX){
+class MiniMaxDFSAlphaBetaPrunning extends MiniMax{
+    public MiniMaxDFSAlphaBetaPrunning(int MAX){
         super(MAX);
     }
     
@@ -27,7 +27,8 @@ class MiniMaxDFS extends MiniMax{
      *
      *  @return utilityValue;
      */
-    public int findBestMove(GameState board, int depth){
+    public int findBestMove(GameState board, int depth, int alpha, int beta){
+        System.out.println("Alpha = " + alpha + " Beta = " + beta);
         /**
          *   return the utility value of a board if game ends or depth is 0
          */
@@ -39,37 +40,44 @@ class MiniMaxDFS extends MiniMax{
          *   make moves for MAX and MIN till game state or final state base on depth
          */
         if(board.getNextPlayer()==MAX){
-            int bestChildUtilityValue = -INFINITY;
+            int bestChildUtilityValue = alpha;
             
             for(int move : this.getPossibleMoves(board)){
                 GameState clone = board.clone();
                 clone.makeMove(move);
                 
-                int boardUtility = this.findBestMove(clone,depth - 1);
+                int boardUtility = this.findBestMove(clone,depth - 1,bestChildUtilityValue, beta);
                 
                 if(boardUtility > bestChildUtilityValue){
                     this.bestMove =  move;
                     this.maxUtilityValue = boardUtility;
                 }
+                
+                if(boardUtility > beta)
+                    return beta;
             }
+            
+            return bestChildUtilityValue;
         }else{
-            int bestChildUtilityValue = INFINITY;
+            int bestChildUtilityValue = beta;
             
             for(int move : this.getPossibleMoves(board)){
                 
                 GameState clone = board.clone();
                 clone.makeMove(move);
                 
-                int boardUtility = this.findBestMove(clone,depth - 1);
+                int boardUtility = this.findBestMove(clone,depth - 1, alpha, bestChildUtilityValue);
                 
                 if(boardUtility < bestChildUtilityValue){
                     this.bestMove =  move;
                     this.maxUtilityValue = boardUtility;
                 }
+                
+                if(boardUtility <alpha)
+                    return alpha;
             }
+            
+            return bestChildUtilityValue;
         }
-        
-        return this.maxUtilityValue;
     }
-    
 }

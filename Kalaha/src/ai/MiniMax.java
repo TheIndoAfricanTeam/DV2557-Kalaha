@@ -47,6 +47,8 @@ abstract class MiniMax {
      */
     protected int bestMove = -1;
     
+    protected int INFINITY = 999;
+    
     
     /**
      * MiniMax constructor used to initialize MiniMax
@@ -71,13 +73,20 @@ abstract class MiniMax {
      *  @return utilityValue
      */
     public int evaluate(GameState board){ 
+        //TODO any bouse with more than 32 marbles won the game
         int utility = 0;
         
         if(board.gameEnded()){
+            //TODO: rethink this
             return board.getScore(board.getNextPlayer());
         }else{
-            utility = board.getScore(MAX)-board.getScore(MIN);
+            //check if current player has more than 36 pebbles in house
+            if(board.getNextPlayer()== MAX && board.getScore(MAX) > 36)
+                return INFINITY;
             
+            if(board.getNextPlayer()== MIN && board.getScore(MIN) > 36)
+                return -INFINITY;
+                
             return this.computeValueOfSeedsRemainingOnBoard(board);
         }
     }
