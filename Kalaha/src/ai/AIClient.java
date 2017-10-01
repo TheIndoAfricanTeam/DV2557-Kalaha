@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import kalaha.*;
 import java.util.Stack;
+
 /**
  * This is the main class for your Kalaha AI bot. Currently
  * it only makes a random, valid move each turn.
@@ -202,41 +203,6 @@ public class AIClient implements Runnable
         }
     }
     
-    
-    
-    /**
-     * This is the method that makes a move each time it is your turn.
-     * Here you need to change the call to the random method to your
-     * Minimax search.
-     * 
-     * @param currentBoard The current board state
-     * @return Move to make (1-6)
-     */
-    public int getMove(GameState currentBoard)
-    {
-       	int next_player = currentBoard.getNextPlayer();
-		int start_player;
-		if (next_player == 1)	{
-			start_player = 2;
-		}
-		else	{
-			start_player = 1;
-		}
-    	int myMove = MiniMax(currentBoard, 1, 5, -99999, 99999).res;
-        return myMove;
-    }
-    
-    /**
-     * Returns a random ambo number (1-6) used when making
-     * a random move.
-     * 
-     * @return Random ambo number
-     */
-    public int getRandom()
-    {
-        return 1 + (int)(Math.random() * 6);
-    }
-    
     /**
      * The Minimax class
      * 
@@ -247,7 +213,7 @@ public class AIClient implements Runnable
     {
     	// Initial Game State
     	private GameState initState;
-    	
+    	   	
     	// Depth limit of the Game Tree
     	private int depth;
     	
@@ -257,11 +223,6 @@ public class AIClient implements Runnable
     	// Beta value
     	private int max;
     	
-    	// Search result
-    	private int res;
-    	
-    	// Player (+1 - Max , +2 - Min)
-    	private int player; 
     	/**
     	 * Initializes a Game Tree & stores the search result
     	 * 
@@ -277,8 +238,6 @@ public class AIClient implements Runnable
     		this.depth = depth;
     		this.min = min;
     		this.max = max;
-    		this.player = 1;
-    		this.res = search(this.initState, this.player, this.depth, this.min, this.max);
     	}
     	
     	/**
@@ -323,7 +282,7 @@ public class AIClient implements Runnable
     		else if (player == 2)	{     // Minimizer node
     			int currentScore = max;
     			Stack<GameState> children = new Stack<GameState>();
-    			for (int i = 0; i < 5; i++)	{
+    			for (int i = 1; i < 6; i++)	{
     				if (gameState.moveIsPossible(i))	{
     					GameState nextState = gameState.clone();
     					nextState.makeMove(i);
@@ -333,7 +292,7 @@ public class AIClient implements Runnable
     	        while (!children.isEmpty())	
     	        {
     	        	GameState child = children.pop();			
-    	        	int nextScore = search(child, 1, depth - 1, min, currentScore);
+    	        	int nextScore = search(child, 2, depth - 1, min, currentScore);
     				if (nextScore < currentScore)	{
     					currentScore = nextScore;
     				}
@@ -345,5 +304,38 @@ public class AIClient implements Runnable
      		}
 			return 1 + (int)(Math.random() * 6);
           	}
+    	
+    	public int getBestMove()
+    	{
+    		int bestMove = this.search(this.initState, 1, this.depth, this.min, this.max);
+    		return bestMove;
     	}
     }
+    
+    /**
+     * This is the method that makes a move each time it is your turn.
+     * Here you need to change the call to the random method to your
+     * Minimax search.
+     * 
+     * @param currentBoard The current board state
+     * @return Move to make (1-6)
+     */
+    
+    public int getMove(GameState currentBoard)
+    {
+    	MiniMax tree = new MiniMax(currentBoard, 5, -99999, 99999);
+		int myMove = tree.getBestMove();
+        return myMove;
+    }
+    
+    /**
+     * Returns a random ambo number (1-6) used when making
+     * a random move.
+     * 
+     * @return Random ambo number
+     */
+    public int getRandom()
+    {
+        return 1 + (int)(Math.random() * 6);
+    }
+}
