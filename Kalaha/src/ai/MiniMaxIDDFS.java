@@ -67,7 +67,7 @@ class MiniMaxIDDFS extends MiniMax {
                     clone.makeMove(move);
                     
                     long endTime = System.currentTimeMillis()-startTime;
-                    int boardUtility = this.findBestMove(clone,depth - 1, (endTime/1000));
+                    int boardUtility = this.findBestMove(clone,_depth - 1, (endTime/1000));
                     
                     if(boardUtility < bestChildUtilityValue){
                         this.bestMove =  move;
