@@ -30,6 +30,8 @@ public class AIClient implements Runnable
      */
     private static final int DEPTH = 5;
     
+    private static final int INFINITY = 999;
+    
     /**
      * Creates a new client.
      */
@@ -221,30 +223,35 @@ public class AIClient implements Runnable
          *   Initialize minimizeDFS with current player
          */
         
-//        MiniMaxDFS minimax = new MiniMaxDFS(currentBoard.getNextPlayer());
-//        MiniMaxDFSAlphaBetaPrunning minimax = new MiniMaxDFSAlphaBetaPrunning(currentBoard.getNextPlayer());
-        MiniMaxIDDFS minimax = new MiniMaxIDDFS(currentBoard.getNextPlayer());
+        //MiniMaxDFS minimax = new MiniMaxDFS(currentBoard.getNextPlayer());
+        //MiniMaxDFSAlphaBetaPrunning minimax = new MiniMaxDFSAlphaBetaPrunning(currentBoard.getNextPlayer());
         //MiniMaxIDDFS minimax = new MiniMaxIDDFS(currentBoard.getNextPlayer());
+        MiniMaxIDDFSAlphaBetaPrunning minimax = new MiniMaxIDDFSAlphaBetaPrunning(currentBoard.getNextPlayer());
         
         /**
          *  compute the minimax on the current board based
-         *  
+         *
          *  @param board
          *  @param depth
          *  @param alpha
          *  @param beta
          *  @return move
          */
-//        minimax.findBestMove(currentBoard.clone(), DEPTH);
-//        minimax.findBestMove(currentBoard.clone(), DEPTH,-999,999);
-        minimax.findBestMove(currentBoard.clone(), DEPTH, 0);
-        //minimax.findBestMove(currentBoard.clone(), DEPTH,0,-999,999
+        //minimax.findBestMove(currentBoard.clone(), DEPTH);
+        //minimax.findBestMove(currentBoard.clone(), DEPTH,-INFINITY,INFINITY);
+        //minimax.findBestMove(currentBoard.clone(), DEPTH, 0);
+        minimax.findBestMove(currentBoard.clone(), DEPTH,0,-INFINITY,INFINITY);
         
         /**
          *   return the best move for AI
          */
+        int move = minimax.bestMove;
         
-        return minimax.bestMove;
+        if(move == -1){
+            System.out.println("Move is -1");
+        }
+        
+        return move;
     }
     
     /**

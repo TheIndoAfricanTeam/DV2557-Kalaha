@@ -28,8 +28,8 @@ class MiniMaxIDDFS extends MiniMax {
      *  @return utilityValue;
      */
     public int findBestMove(GameState board, int depth, double timeElapsed){
-        System.out.println("Depth " + depth + " time " + timeElapsed);
         long startTime = System.currentTimeMillis();
+        int bestChildMove = -1;
         
         /**
          *   return the utility value of a board if game ends or depth is 0 or has been running for 4secs
@@ -53,7 +53,7 @@ class MiniMaxIDDFS extends MiniMax {
                     int boardUtility = this.findBestMove(clone,_depth - 1, (endTime/1000) );
                     
                     if(boardUtility > bestChildUtilityValue){
-                        this.bestMove =  move;
+                        bestChildMove = move;
                         this.maxUtilityValue = boardUtility;
                     }
                 }
@@ -71,13 +71,14 @@ class MiniMaxIDDFS extends MiniMax {
                     int boardUtility = this.findBestMove(clone,_depth - 1, (endTime/1000));
                     
                     if(boardUtility < bestChildUtilityValue){
-                        this.bestMove =  move;
+                        bestChildMove = move;
                         this.maxUtilityValue = boardUtility;
                     }
                 }
             }
         }
         
+        this.bestMove = bestChildMove;
         return this.maxUtilityValue;
     }
 }

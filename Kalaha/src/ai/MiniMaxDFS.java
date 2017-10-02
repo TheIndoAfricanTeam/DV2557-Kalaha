@@ -28,6 +28,8 @@ class MiniMaxDFS extends MiniMax{
      *  @return utilityValue;
      */
     public int findBestMove(GameState board, int depth){
+        int bestChildMove = -1;
+        
         /**
          *   return the utility value of a board if game ends or depth is 0
          */
@@ -40,16 +42,16 @@ class MiniMaxDFS extends MiniMax{
          */
         if(board.getNextPlayer()==MAX){
             int bestChildUtilityValue = -INFINITY;
-            
+           
             for(int move : this.getPossibleMoves(board)){
                 GameState clone = board.clone();
                 clone.makeMove(move);
                 
                 int boardUtility = this.findBestMove(clone,depth - 1);
-                
+                                
                 if(boardUtility > bestChildUtilityValue){
-                    this.bestMove =  move;
-                    this.maxUtilityValue = boardUtility;
+                    bestChildMove = move;
+                    bestChildUtilityValue = boardUtility;
                 }
             }
         }else{
@@ -63,12 +65,13 @@ class MiniMaxDFS extends MiniMax{
                 int boardUtility = this.findBestMove(clone,depth - 1);
                 
                 if(boardUtility < bestChildUtilityValue){
-                    this.bestMove =  move;
-                    this.maxUtilityValue = boardUtility;
+                    bestChildMove = move;
+                    bestChildUtilityValue = boardUtility;
                 }
             }
         }
         
+        this.bestMove = bestChildMove;
         return this.maxUtilityValue;
     }
     

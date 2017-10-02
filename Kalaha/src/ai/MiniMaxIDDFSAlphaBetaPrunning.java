@@ -29,6 +29,7 @@ class MiniMaxIDDFSAlphaBetaPrunning extends MiniMax {
      */
     public int findBestMove(GameState board, int depth, double timeElapsed,int alpha, int beta){
         long startTime = System.currentTimeMillis();
+        int bestChildMove = -1;
         
         /**
          *   return the utility value of a board if game ends or depth is 0 or has been running for 4secs
@@ -41,25 +42,31 @@ class MiniMaxIDDFSAlphaBetaPrunning extends MiniMax {
          *   make moves for MAX and MIN till game state or final state base on depth
          */
         if(board.getNextPlayer()==MAX){
+            int bestChildUtilityValue = alpha;
+            
             for(int _depth = 1; _depth<depth; _depth++){
-                int bestChildUtilityValue = alpha;
                 
                 for(int move : this.getPossibleMoves(board)){
                     GameState clone = board.clone();
                     clone.makeMove(move);
                     
                     long endTime = System.currentTimeMillis()-startTime;
-                    int boardUtility = this.findBestMove(clone,_depth - 1, (endTime/1000), bestChildUtilityValue, beta);
+                    int boardUtility = this.findBestMove(clone,depth - 1, (endTime/1000), bestChildUtilityValue, beta);
                     
                     if(boardUtility > bestChildUtilityValue){
-                        this.bestMove =  move;
-                        this.maxUtilityValue = boardUtility;
+                        bestChildMove = move;
+                        bestChildUtilityValue = boardUtility;
+                    }else if(bestChildUtilityValue > beta){
+                        return beta;
                     }
                 }
             }
+            
+            this.maxUtilityValue = bestChildUtilityValue;
         }else{
+            int bestChildUtilityValue = beta;
+            
             for(int _depth = 1; _depth<depth; _depth++){
-                int bestChildUtilityValue = beta;
                 
                 for(int move : this.getPossibleMoves(board)){
                     
@@ -67,16 +74,23 @@ class MiniMaxIDDFSAlphaBetaPrunning extends MiniMax {
                     clone.makeMove(move);
                     
                     long endTime = System.currentTimeMillis()-startTime;
-                    int boardUtility = this.findBestMove(clone,_depth - 1, (endTime/1000),alpha, bestChildUtilityValue);
+                    int boardUtility = this.findBestMove(clone,depth - 1, (endTime/1000), alpha, bestChildUtilityValue);
                     
                     if(boardUtility < bestChildUtilityValue){
-                        this.bestMove =  move;
-                        this.maxUtilityValue = boardUtility;
+                        bestChildMove = move;
+                        bestChildUtilityValue = boardUtility;
+                    }else if(bestChildUtilityValue < alpha){
+                        return alpha;
                     }
                 }
             }
+            
+            this.maxUtilityValue = bestChildUtilityValue;
         }
         
+        
+        
+        this.bestMove = bestChildMove;
         return this.maxUtilityValue;
     }
 }
