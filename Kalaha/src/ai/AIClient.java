@@ -28,7 +28,7 @@ public class AIClient implements Runnable
     /**
      *  Define the DEPTH constant for minimax
      */
-    private static final int DEPTH = 5;
+    private static final int DEPTH = 7;
     
     private static final int INFINITY = 999;
     
@@ -223,10 +223,10 @@ public class AIClient implements Runnable
          *   Initialize minimizeDFS with current player
          */
         
-        //MiniMaxDFS minimax = new MiniMaxDFS(currentBoard.getNextPlayer());
+        MiniMaxDFS minimax = new MiniMaxDFS(currentBoard.getNextPlayer());
         //MiniMaxDFSAlphaBetaPrunning minimax = new MiniMaxDFSAlphaBetaPrunning(currentBoard.getNextPlayer());
         //MiniMaxIDDFS minimax = new MiniMaxIDDFS(currentBoard.getNextPlayer());
-        MiniMaxIDDFSAlphaBetaPrunning minimax = new MiniMaxIDDFSAlphaBetaPrunning(currentBoard.getNextPlayer());
+        //MiniMaxIDDFSAlphaBetaPrunning minimax = new MiniMaxIDDFSAlphaBetaPrunning(currentBoard.getNextPlayer());
         
         /**
          *  compute the minimax on the current board based
@@ -237,10 +237,10 @@ public class AIClient implements Runnable
          *  @param beta
          *  @return move
          */
-        //minimax.findBestMove(currentBoard.clone(), DEPTH);
+        minimax.findBestMove(currentBoard.clone(), DEPTH);
         //minimax.findBestMove(currentBoard.clone(), DEPTH,-INFINITY,INFINITY);
         //minimax.findBestMove(currentBoard.clone(), DEPTH, 0);
-        minimax.findBestMove(currentBoard.clone(), DEPTH,0,-INFINITY,INFINITY);
+        //minimax.findBestMove(currentBoard.clone(), DEPTH,0,-INFINITY,INFINITY);
         
         /**
          *   return the best move for AI

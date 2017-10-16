@@ -28,7 +28,7 @@ class MiniMaxDFSAlphaBetaPrunning extends MiniMax{
      *  @return utilityValue;
      */
     public int findBestMove(GameState board, int depth, int alpha, int beta){
-        int bestChildMove = -1;
+        int bestChildMove = -189898989;
         
         /**
          *   return the utility value of a board if game ends or depth is 0
@@ -50,14 +50,15 @@ class MiniMaxDFSAlphaBetaPrunning extends MiniMax{
                 int boardUtility = this.findBestMove(clone,depth - 1, bestChildUtilityValue, beta);
                 
                 if(boardUtility > bestChildUtilityValue){
-                    bestChildMove = move;
+//                    bestChildMove = move;
+                    this.bestMove = move;
                     bestChildUtilityValue = boardUtility;
                 }else if(bestChildUtilityValue > beta){
                     return beta;
                 }
             }
             
-            this.bestMove =  bestChildMove;
+            //this.bestMove =  bestChildMove;
             return bestChildUtilityValue;
         }else{
             int bestChildUtilityValue = beta;
@@ -70,14 +71,15 @@ class MiniMaxDFSAlphaBetaPrunning extends MiniMax{
                 int boardUtility = this.findBestMove(clone,depth - 1, alpha, bestChildUtilityValue);
                 
                 if(boardUtility < bestChildUtilityValue){
-                    bestChildMove = move;
+//                    bestChildMove = move;
+                    this.bestMove = move;
                     bestChildUtilityValue = boardUtility;
                 }else if(bestChildUtilityValue < alpha){
                     return alpha;
                 }
             }
             
-            this.bestMove = bestChildMove;
+            //this.bestMove = bestChildMove;
             return bestChildUtilityValue;
         }
     }

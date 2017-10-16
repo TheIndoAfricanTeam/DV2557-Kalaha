@@ -44,8 +44,7 @@ class MiniMaxIDDFSAlphaBetaPrunning extends MiniMax {
         if(board.getNextPlayer()==MAX){
             int bestChildUtilityValue = alpha;
             
-            for(int _depth = 1; _depth<depth; _depth++){
-                
+            for(int _depth = 1; _depth<depth; _depth++){                
                 for(int move : this.getPossibleMoves(board)){
                     GameState clone = board.clone();
                     clone.makeMove(move);
