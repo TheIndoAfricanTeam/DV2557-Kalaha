@@ -223,6 +223,9 @@ public class AIClient implements Runnable
     	// Beta value
     	private int max;
     	
+    	// Starting player
+    	private int startPlayer;
+    	
     	/**
     	 * Initializes a Game Tree & stores the search result
     	 * 
@@ -234,10 +237,11 @@ public class AIClient implements Runnable
     	
     	public MiniMax(GameState initState, int depth, int min, int max)
     	{
-    		this.initState = initState.clone();
+    		this.initState = initState;
     		this.depth = depth;
     		this.min = min;
     		this.max = max;
+    		this.startPlayer = initState.getNextPlayer();
     	}
     	
     	/**
@@ -254,12 +258,13 @@ public class AIClient implements Runnable
     	private int search(GameState gameState, int player, int depth, int min, int max)
     	{
           	if (gameState.gameEnded() || depth == 0)	{
-          		return gameState.getScore(player) - gameState.getScore(2 / player);
+          		return gameState.getScore(this.startPlayer) - gameState.getScore(2 / this.startPlayer);
     		}
-    		else if (player == 1)	{	// Maximizer node 
+    		else if (player == this.startPlayer)	{	// Maximizer node 
+    			System.out.println("This is Maximizer: " + gameState.getNextPlayer());
     			int currentScore = min;
     		    Stack<GameState> children = new Stack<GameState>();
-    			for (int i = 1; i < 6; i++)	{
+    			for (int i = 1; i <= 6; i++)	{
     				if (gameState.moveIsPossible(i))	{
     					GameState nextState = gameState.clone();
     					nextState.makeMove(i);
@@ -268,8 +273,10 @@ public class AIClient implements Runnable
     			}
     	        while (!children.isEmpty())	
     	        {
-    	        	GameState child = children.pop();			
-    	        	int nextScore = search(child, 2, depth - 1, currentScore, max);
+    	        	GameState child = children.pop();
+    	        	System.out.println("Entering level no: " + depth);
+    	        	int nextScore = search(child, 2 / this.startPlayer, depth - 1, currentScore, max);
+    	        	System.out.println("Leaving level no: " + depth);
     				if (nextScore > currentScore)	{
     					currentScore = nextScore;
     				}
@@ -277,12 +284,14 @@ public class AIClient implements Runnable
     					return max;
     				}
     			}
+    	        System.out.println("Leaving Maximizer!");
     			return currentScore;
     		}
-    		else if (player == 2)	{     // Minimizer node
+    		else	{     // Minimizer node
     			int currentScore = max;
+    			System.out.println("This is Minimizer: " + gameState.getNextPlayer());
     			Stack<GameState> children = new Stack<GameState>();
-    			for (int i = 1; i < 6; i++)	{
+    			for (int i = 1; i <= 6; i++)	{
     				if (gameState.moveIsPossible(i))	{
     					GameState nextState = gameState.clone();
     					nextState.makeMove(i);
@@ -291,8 +300,10 @@ public class AIClient implements Runnable
     			}
     	        while (!children.isEmpty())	
     	        {
-    	        	GameState child = children.pop();			
-    	        	int nextScore = search(child, 2, depth - 1, min, currentScore);
+    	        	GameState child = children.pop();
+    	        	System.out.println("Entering level no: " + depth);
+    	        	int nextScore = search(child, child.getNextPlayer(), depth - 1, min, currentScore);
+    	        	System.out.println("Leaving level no: " + depth);
     				if (nextScore < currentScore)	{
     					currentScore = nextScore;
     				}
@@ -300,14 +311,14 @@ public class AIClient implements Runnable
     					return min;
     				}
     			}
+    	        System.out.println("Leaving Maximizer!");
     			return currentScore;
      		}
-			return 1 + (int)(Math.random() * 6);
-          	}
+        }
     	
     	public int getBestMove()
     	{
-    		int bestMove = this.search(this.initState, 1, this.depth, this.min, this.max);
+    		int bestMove = this.search(this.initState, this.startPlayer, this.depth, this.min, this.max);
     		return bestMove;
     	}
     }
