@@ -55,7 +55,7 @@ abstract class MiniMax {
     /**
      * Define the DEPTH constant for minimax
      */
-    protected static final int DEPTH = 10;
+    protected static final int DEPTH = 20;
 
     /**
      * MiniMax constructor used to initialise MiniMax

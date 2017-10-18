@@ -211,7 +211,7 @@ public class AIClient implements Runnable {
          */
         //minimax.findBestMove(currentBoard.clone(), 0);
         //minimax.findBestMove(currentBoard.clone(), 0, -INFINITY, INFINITY);
-        long endTime = (System.currentTimeMillis() + 4);
+        long endTime = (System.currentTimeMillis() + 4000);
 
         //minimax.findBestMove(currentBoard.clone(), 0, 1, endTime);
         minimax.findBestMove(currentBoard.clone(), 0, 1, endTime, -INFINITY, INFINITY);
