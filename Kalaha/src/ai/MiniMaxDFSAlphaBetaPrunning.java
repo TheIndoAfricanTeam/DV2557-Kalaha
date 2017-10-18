@@ -2,11 +2,12 @@
 * To change this license header, choose License Headers in Project Properties.
 * To change this template file, choose Tools | Templates
 * and open the template in the editor.
-*/
+ */
 package ai;
 
-import java.util.ArrayList;
-import java.util.List;
+import static ai.MiniMax.DEPTH;
+import java.util.HashMap;
+import java.util.Map;
 import kalaha.GameState;
 
 /**
@@ -14,73 +15,75 @@ import kalaha.GameState;
  *
  * Using minimax depth-first-search to find the best move for AI client
  */
-class MiniMaxDFSAlphaBetaPrunning extends MiniMax{
-    public MiniMaxDFSAlphaBetaPrunning(int MAX){
+class MiniMaxDFSAlphaBetaPrunning extends MiniMax {
+
+    public MiniMaxDFSAlphaBetaPrunning(int MAX) {
         super(MAX);
     }
-    
+
     /**
-     *  works through valid game states to find the best move for the current game state
+     * works through valid game states to find the best move for the current
+     * game state
      *
-     *  @param gameState
-     *  @param depth
+     * @param gameState
+     * @param depth
      *
-     *  @return utilityValue;
+     * @return utilityValue;
      */
-    public int findBestMove(GameState board, int depth, int alpha, int beta){
-        int bestChildMove = -189898989;
-        
-        /**
-         *   return the utility value of a board if game ends or depth is 0
-         */
-        if(depth<=0 || board.gameEnded()){
-            return this.evaluate(board);
+    public int findBestMove(GameState board, int depth, int ALPHA, int BETA) {
+        if (board.gameEnded() || depth == DEPTH) {
+            return getUtilityValue(board);
         }
-        
-        /**
-         *   make moves for MAX and MIN till game state or final state base on depth
-         */
-        if(board.getNextPlayer()==MAX){
-            int bestChildUtilityValue = alpha;
-            
-            for(int move : this.getPossibleMoves(board)){
-                GameState clone = board.clone();
-                clone.makeMove(move);
-                
-                int boardUtility = this.findBestMove(clone,depth - 1, bestChildUtilityValue, beta);
-                
-                if(boardUtility > bestChildUtilityValue){
-//                    bestChildMove = move;
-                    this.bestMove = move;
-                    bestChildUtilityValue = boardUtility;
-                }else if(bestChildUtilityValue > beta){
-                    return beta;
+
+        int boardUtility = (board.getNextPlayer() == MAX) ? -100 : 100;
+        int bestBoardMove = -1;
+
+        Map<Integer, Integer> utils = new HashMap<>();
+
+        for (int move : this.getPossibleMoves(board)) {
+            GameState clone = board.clone();
+            clone.makeMove(move);
+
+            int moveUtility = findBestMove(clone, depth + 1, ALPHA, BETA);
+            utils.put(move, moveUtility);
+
+            if (board.getNextPlayer() == MAX) {
+                if (boardUtility < moveUtility) {
+                    boardUtility = moveUtility;
+                    bestBoardMove = move;
+                }
+
+                if (moveUtility >= BETA) {
+                    return moveUtility;
+                }
+
+                if (moveUtility > ALPHA) {
+                    ALPHA = moveUtility;
                 }
             }
-            
-            //this.bestMove =  bestChildMove;
-            return bestChildUtilityValue;
-        }else{
-            int bestChildUtilityValue = beta;
-            
-            for(int move : this.getPossibleMoves(board)){
-                
-                GameState clone = board.clone();
-                clone.makeMove(move);
-                
-                int boardUtility = this.findBestMove(clone,depth - 1, alpha, bestChildUtilityValue);
-                
-                if(boardUtility < bestChildUtilityValue){
-//                    bestChildMove = move;
-                    this.bestMove = move;
-                    bestChildUtilityValue = boardUtility;
-                }else if(bestChildUtilityValue < alpha){
-                    return alpha;
+
+            if (board.getNextPlayer() == MIN) {
+                if (boardUtility > moveUtility) {
+                    boardUtility = moveUtility;
+                    bestBoardMove = move;
+                }
+
+                if (moveUtility <= ALPHA) {
+                    return moveUtility;
+                }
+
+                if (moveUtility < BETA) {
+                    BETA = moveUtility;
                 }
             }
-            
-            //this.bestMove = bestChildMove;
-            return bestChildUtilityValue;
         }
+
+        System.out.println("DEPTH " + depth);
+        System.out.println("ALPHA " + ALPHA);
+        System.out.println("BETA " + BETA);
+        System.out.println(utils);
+
+        this.bestMove = bestBoardMove;
+        return boardUtility;
     }
 }
